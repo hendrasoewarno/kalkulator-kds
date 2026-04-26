@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+	
+	<link rel="manifest" href="manifest.json">
+	<meta name="theme-color" content="#ff4d4d">
+	<link rel="apple-touch-icon" href="icon.png">
+	
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KDS Portal v11</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #e9ecef; margin: 0; display: flex; justify-content: center; }
+        .container { background: white; width: 100%; max-width: 414px; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.1); padding-bottom: 40px; display: flex; flex-direction: column; }
+        .header-card { background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.6)), url('reminder.avif'); background-size: cover; height: 130px; display: flex; align-items: flex-end; padding: 20px; color: white; }
+        .menu-container { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .menu-item { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 12px 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; }
+        .menu-item:hover { border-color: #ff4d4d; background: #fff9f9; }
+        .menu-item i { font-size: 1.2rem; color: #ff4d4d; width: 25px; text-align: center; }
+        .menu-text h4 { margin: 0; font-size: 0.95rem; color: #333; }
+        .menu-text p { margin: 0; font-size: 0.7rem; color: #777; }
+        .question-section { padding: 12px 25px; }
+        .label-text { font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; color: #333; display: block; }
+        select, input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 0.9rem; box-sizing: border-box; background-color: #f9f9f9; }
+        .info-box { background-color: #f0f7ff; border-left: 4px solid #007bff; padding: 10px; margin-top: 5px; font-size: 0.75rem; color: #444; border-radius: 0 8px 8px 0; }
+        .hidden { display: none; }
+        .btn-action { width: calc(100% - 50px); margin: 10px auto; padding: 14px; border-radius: 30px; font-size: 1rem; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; border: none; }
+        .btn-submit { background: #ff4d4d; color: white; }
+		.btn-wa { background: #25d366; color: white; margin-top: 5px; }
+		.btn-email { background: #007bff; color: white; }
+        .btn-back { background: #6c757d; color: white; margin-top: 15px; }
+        #result1-display { margin: 15px 25px; padding: 15px; background: #fff; border-radius: 12px; border: 1px solid #ddd; }
+		#result2-display { margin: 15px 25px; padding: 15px; background: #fff; border-radius: 12px; border: 1px solid #ddd; }
+        .res-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.85rem; }
+        .res-bold { font-weight: bold; color: #ff4d4d; }
+        .badge { padding: 2px 8px; border-radius: 5px; color: white; font-size: 0.7rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-card">
+        <div id="header-title"><h1>KDS Portal</h1><p>Financing Support System</p></div>
+    </div>
+
+    <div id="main-menu" class="menu-container">
+        <div class="menu-item" onclick="openTool('crack')"><i class="fas fa-unlock-alt"></i><div class="menu-text"><h4>1. Analisa Kompetitor</h4><p>Hitung Bunga Flat & Efektif Kompetitor</p></div></div>
+        <div class="menu-item" onclick="openTool('kalkulator')"><i class="fas fa-calculator"></i><div class="menu-text"><h4>2. Kalkulator KDS</h4><p>Simulasi Profit & Penawaran</p></div></div>
+    </div>
+
+    <div id="form-crack" class="hidden">
+        <div class="question-section"><label class="label-text">OTR Unit (Brosur)</label><input type="number" id="c_otr"></div>
+        <div class="question-section"><label class="label-text">DP Gross (Brosur)</label><input type="number" id="c_dp"></div>
+        <div class="question-section">
+			<label class="label-text">Voucher/Subsidi</label>
+			<input type="number" id="c_voucher" value="0">
+			<div class="info-box">Subsidi DP (misal: 500000)</div>
+		</div>
+        <div class="question-section"><label class="label-text">Angsuran/Bulan</label><input type="number" id="c_angs"></div>
+        <div class="question-section"><label class="label-text">Tenor</label><input type="number" id="c_tenor"></div>
+        <button class="btn-action btn-submit" onclick="runCrack()">Analisa Leasing</button>
+    </div>
+	
+    <div id="form-kalkulator" class="hidden">
+        <div class="question-section"><label class="label-text">OTR Unit (Brosur)</label><input type="number" id="k_otr" placeholder="Contoh: 25000000"></div>
+        <div class="question-section"><label class="label-text">DP Netto</label><input type="number" id="k_dpnet" placeholder="Contoh: 3000000"></div>
+        <div class="question-section">
+            <label class="label-text">Suku Bunga Flat per Bulan (%)</label>
+            <input type="number" step="0.05" id="k_bunga_manual" value="10">
+            <div class="info-box">Masukkan suku bunga flat bulanan</div>
+        </div>
+        <button class="btn-action btn-submit" onclick="runKalkulator()">Analisa Profitabilitas</button>
+    </div>	
+	
+	<div id="result1-display" class="hidden"></div>
+
+    <div id="form-bargaining" class="hidden">
+		<div class="question-section"><label class="label-text">Angsuran/Bulan</label><input type="number" id="b_angs"></div>
+        <div class="question-section"><label class="label-text">Tenor</label><input type="number" id="b_tenor"></div>
+        <button class="btn-action btn-submit" onclick="runBargaining()">Analisa Kelayakan</button>
+		<button class="btn-action btn-submit" onclick="runTabel()">Buat Tabel Cicilan</button>
+    </div>
+	
+	<div id="result2-display" class="hidden"></div>
+	
+	<div id="form-whatsapp" class="hidden">
+		<div class="question-section"><label class="label-text">No. WhatsApp Pelanggan</label><input type="tel" id="wa_number" placeholder="6281370373223"></div>
+		<button id="wa-btn" class="btn-action btn-wa" onclick="sendWA()"><i class="fab fa-whatsapp"></i> Kirim Tabel Cicilan</button>
+	</div>	
+	
+	<div id="form-email" class="hidden">
+		<div class="question-section"><label class="label-text">Email Pelanggan</label><input type="email" id="cust_email" placeholder="hendra.soewarno@gmail.com"></div>
+		<button id="email-btn"class="btn-action btn-email" onclick="sendEmail()"><i class="fas fa-envelope"></i> Email</button>
+	</div>
+	
+    <button id="btn-back" class="btn-action btn-back hidden" onclick="goBack()"><i class="fas fa-arrow-left"></i> Kembali</button>		   
+</div>
+
+<script>
+    const KDS = {
+        presentValue: (payment, rate, term) => {
+            if (rate == 0) rate = 0.00000001;
+            return payment * ((1 - Math.pow((1 + rate), -term)) / rate);
+        },
+        guessPresentValue: (pv, payment, term, initialRate) => {
+            let top = initialRate, bottom = -initialRate, maxIter = 0, guessRate;
+            do {
+                guessRate = (top + bottom) / 2;
+                let gpv = KDS.presentValue(payment, guessRate, term);
+                if (gpv < pv) top = guessRate; else bottom = guessRate;
+                maxIter++;
+                if (maxIter > 10000) return 0;
+            } while (top - bottom > 0.00001);
+            return (top + bottom) / 2;
+        },
+        hitungPremiAsuransi: (wilayah, tenor, otr) => {
+			//premi asuransi
+            if (tenor <= 12) return (1.95 * otr) / 100;
+            if (tenor < 24) return (2.78 * otr) / 100;
+            if (tenor < 30) return (3.608 * otr) / 100;
+            if (tenor < 36) return (4.34 * otr) / 100;
+            return (5.07 * otr) / 100;
+        },
+        hitungADM: (wilayah, tenor) => {
+			// biaya tenaga kerja dan administrasi
+            if (tenor <= 12) return 100000;
+            if (tenor <= 24) return 150000;
+            return 200000;
+        },
+        getPokok: (wilayah, tenor, otr, dp) => {		
+            return otr - dp; //pokok piutang
+        },
+		getCOGS: (wilayah, tenor, otr, dp) => {
+			//OTR dikurang DP ditambah biaya ADM ditambah premi asuransi
+			//harga pokok penjualan
+            return (otr - dp) + KDS.hitungADM(wilayah, tenor) + KDS.hitungPremiAsuransi(wilayah, tenor, otr); 
+        },		
+        hitungPotensiProfit: (wilayah, tenor, otr, dp, angsuran) => {
+            let cogs = KDS.getCOGS(wilayah, tenor, otr, dp);
+					
+			// Cost of fund=1% 
+            let bungaPMT = 0.01; 
+            let indexPMT = (1 - 1 / Math.pow(1 + bungaPMT, tenor)) / bungaPMT;
+			
+			// PV dari total angsuran
+			let pvTotalAnsuran = (angsuran*indexPMT);
+			
+			// PV dari total angsuran - cogs
+            let grossMargin =  pvTotalAnsuran - cogs;
+
+			//resiko bad debt
+			let NPF = 0.02; //Resiko Non-Performing Loan
+			
+			//kehilangan Potensi Insentif Leasing jika dilimpahkan ke Fincoy
+			let PIL = 750000; 
+			
+            return grossMargin - PIL - (cogs * NPF);
+        }
+    };
+	
+    // Fungsi Crack & Bargaining (tetap sama dari versi sebelumnya)
+    function runCrack() {
+        let otr = parseFloat(document.getElementById('c_otr').value);
+        let dp = parseFloat(document.getElementById('c_dp').value);
+        let voc = parseFloat(document.getElementById('c_voucher').value);
+        let ang = parseFloat(document.getElementById('c_angs').value);
+        let ten = parseInt(document.getElementById('c_tenor').value);
+        let pokok = otr - (dp - voc);
+        let flat = (( (ten * ang) / pokok ) - 1) * 12 / ten;
+        let eff = KDS.guessPresentValue(pokok, ang, ten, 0.1) * 12;
+        showResult("result1-display", `
+			<div class="res-row"><span>OTR:</span><span class="res-bold">Rp ${otr.toLocaleString()}</span></div>
+			<div class="res-row"><span>Uang Muka:</span><span class="res-bold">Rp -${dp.toLocaleString()}</span></div>
+			<div class="res-row"><span>Subsidi DP:</span><span class="res-bold">Rp ${voc.toLocaleString()}</span></div>
+			<div class="res-row"><span></span><span class="res-bold">----------------------</span></div>
+            <div class="res-row"><span>Pokok Hutang:</span><span class="res-bold">Rp ${pokok.toLocaleString()}</span></div>
+            <div class="res-row"><span>Bunga Flat:</span><span class="res-bold">${(flat * 100).toFixed(2)}% /thn</span></div>
+            <div class="res-row"><span>Bunga Efektif:</span><span class="res-bold">${(eff * 100).toFixed(2)}% /thn</span></div>
+        `);
+		document.getElementById('k_otr').value=otr;
+		document.getElementById('k_dpnet').value=(dp-voc);
+		// konversi ke bunga per bulan
+		document.getElementById('k_bunga_manual').value=(flat*100/12).toFixed(2);
+    }	
+
+    function runKalkulator() {
+        let otr = parseFloat(document.getElementById('k_otr').value);
+        let dp = parseFloat(document.getElementById('k_dpnet').value);
+        let bngBulanan = parseFloat(document.getElementById('k_bunga_manual').value);
+        let wil = "CDN"; //tidak ada lagi membedakan ACEH, RIAU, RIAU KEPULAUAN
+        
+        if (!otr || !dp || isNaN(bngBulanan)) return alert("Lengkapi data OTR, DP, dan Bunga!");
+        
+        let html = `<b>Tabel Penawaran (Bunga ${bngBulanan}%/bulan):</b><hr>`;
+        
+        [6, 9, 12, 18, 22, 23, 24, 30, 33, 34, 35, 36, 42, 48].forEach(t => {
+			let pk = KDS.getPokok(wil, t, otr, dp);
+			let angsuran = Math.floor(((pk * (1 + (bngBulanan/100 * t))) / t)/1000) * 1000;
+            
+            let profit = KDS.hitungPotensiProfit(wil, t, otr, dp, angsuran);
+            let pi = (pk + profit) / pk;
+            let skala = Math.sign(profit) * Math.log10(Math.abs(profit) || 1);
+			
+            let color = profit > 0 ? "#28a745" : "#dc3545";          
+
+            html += `
+                <div style="margin-bottom:10px; border-bottom: 1px dashed #ddd; padding-bottom:5px;">
+                    <div class="res-row"><span>Tenor ${t}x:</span><span class="res-bold">Rp ${Math.ceil(angsuran).toLocaleString()}/bulan</span></div>
+                    <div class="res-row"><small>Index Profit (PI):</small><small class="res-bold">${pi.toFixed(3)}</small></div>
+                    <div class="res-row"><small>Skala Profit:</small><span class="badge" style="background:${color}">${skala.toFixed(2)}</span></div>
+                </div>`;
+        });
+        showResult("result1-display", html);
+
+		//tampil form-bargaining
+		document.getElementById('form-bargaining').classList.remove('hidden');
+    }
+
+    function openTool(tool) {
+        document.getElementById('main-menu').classList.add('hidden');
+        document.getElementById('btn-back').classList.remove('hidden');
+        ['form-crack', 'form-kalkulator', 'form-bargaining'].forEach(id => document.getElementById(id).classList.add('hidden'));
+        document.getElementById('result1-display').classList.add('hidden');
+		document.getElementById('result2-display').classList.add('hidden');
+        document.getElementById('form-' + tool).classList.remove('hidden');
+    }
+
+    function goBack() {
+        document.getElementById('main-menu').classList.remove('hidden');
+        document.getElementById('btn-back').classList.add('hidden');
+        document.getElementById('result1-display').classList.add('hidden');
+		document.getElementById('result2-display').classList.add('hidden');
+        ['form-crack', 'form-kalkulator', 'form-bargaining'].forEach(id => document.getElementById(id).classList.add('hidden'));
+    }
+
+    function showResult(id, content) {
+        const res = document.getElementById(id);
+        res.innerHTML = content;
+        res.classList.remove('hidden');
+    }
+
+    function runBargaining() {
+        let otr = parseFloat(document.getElementById('k_otr').value);
+        let dp = parseFloat(document.getElementById('k_dpnet').value);
+		let ang = parseFloat(document.getElementById('b_angs').value);
+		let ten = parseFloat(document.getElementById('b_tenor').value);
+        let wil = "CDN";
+		
+		let html = `<b>Hasil Analisa:</b><hr>`;	
+					
+        [ten].forEach(t => {
+			let pk = KDS.getPokok(wil, t, otr, dp);
+			let flat = (( (ten * ang) / pk ) - 1) * 12 / ten;
+			let eff = KDS.guessPresentValue(pk, ang, ten, 0.1) * 12;		
+           
+            let profit = KDS.hitungPotensiProfit(wil, t, otr, dp, ang);
+            let pi = (pk + profit) / pk;
+            let skala = Math.sign(profit) * Math.log10(Math.abs(profit) || 1);
+			
+            let color = profit > 0 ? "#28a745" : "#dc3545";
+			
+            html += `
+                <div style="margin-bottom:10px; border-bottom: 1px dashed #ddd; padding-bottom:5px;">
+                    <div class="res-row"><span>Tenor ${t}x:</span><span class="res-bold">Rp ${Math.ceil(ang).toLocaleString()}/bulan</span></div>
+					<div class="res-row"><span>Bunga Flat:</span><span class="res-bold">${(flat * 100/12).toFixed(2)}% /bulan</span></div>			
+                    <div class="res-row"><small>Index Profit (PI):</small><small class="res-bold">${pi.toFixed(3)}</small></div>
+                    <div class="res-row"><small>Skala Profit:</small><span class="badge" style="background:${color}">${skala.toFixed(2)}</span></div>
+                </div>`;
+        });
+        showResult("result2-display", html);
+    }
+	
+	let currentTableData = ""; // Store table for WhatsApp
+	
+    function runTabel() {
+        let otr = parseFloat(document.getElementById('k_otr').value);
+        let dp = parseFloat(document.getElementById('k_dpnet').value);
+		let ang = parseFloat(document.getElementById('b_angs').value);
+		let ten = parseFloat(document.getElementById('b_tenor').value);
+        let wil = "CDN";
+		
+		let html = `<b>Tabel Cicilan:</b><hr>`;	
+		
+		currentTableData = `*PENAWARAN PEMBIAYAAN MOTOR*\nOTR: Rp ${otr.toLocaleString()}\nDP Net: Rp ${dp.toLocaleString()}\n--------------------------\n`				
+		
+		let pk = KDS.getPokok(wil, ten, otr, dp);
+		let flat = (( (ten * ang) / pk ) - 1) * 12 / ten;
+							
+        let arr = [ten, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48]
+		const unique = [...new Set(arr)]; 
+		
+		unique.forEach(t => {
+			let angsuran = Math.floor(((pk * (1 + (flat/12 * t))) / t)/1000) * 1000;
+			
+			let profit = KDS.hitungPotensiProfit(wil, t, otr, dp, angsuran);
+					
+            let penawaran = profit > 0 ? `Rp ${Math.ceil(angsuran).toLocaleString()}/bulan`: `tidak ditawarkan`;
+			
+            html += `
+                <div style="margin-bottom:10px; border-bottom: 1px dashed #ddd; padding-bottom:5px;">
+                    <div class="res-row"><span>Tenor ${t}x:</span><span class="res-bold">${penawaran}</span></div>
+                </div>`;
+				
+			if (profit > 0) {
+				currentTableData += `Tenor ${t} bln: Rp ${angsuran.toLocaleString()}\n`;
+			}
+        });
+        showResult("result2-display", html);
+		document.getElementById('form-whatsapp').classList.remove('hidden');
+		document.getElementById('form-email').classList.remove('hidden');
+    }
+	
+	function sendWA() {
+        let phone = document.getElementById('wa_number').value;
+        if(!phone) return alert("Masukkan nomor WhatsApp!");
+        if(!phone.startsWith('62')) phone = '62' + phone.replace(/^0/, '');
+        
+        let text = encodeURIComponent(currentTableData + "\nNb.-Penawaran ini bersifat tidak mengikat\n-Harga dapat berubah setiap saat.");
+        window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+    }
+	
+	function sendEmail() {
+        let email = document.getElementById('cust_email').value;
+        if(!email) return alert("Masukkan alamat email!");
+        
+        let subject = encodeURIComponent("Penawaran Pembiayaan Motor");
+        let body = encodeURIComponent(currentTableData.replace(/\*/g, "") + "\nSimulasi ini bersifat estimasi.");
+        window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+    }	
+</script>
+</body>
+</html>

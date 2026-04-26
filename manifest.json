@@ -1,0 +1,16 @@
+{
+  "name": "KDS Portal",
+  "short_name": "KDS App",
+  "description": "Financing Support System",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ff4d4d",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
