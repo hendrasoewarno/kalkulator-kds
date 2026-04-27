@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kds-v11';
+const CACHE_NAME = 'kds-v110';
 const assets = [
   './',
   './index.html',
