@@ -282,7 +282,7 @@
 		
 		let html = `<b>Tabel Cicilan:</b><hr>`;	
 		
-		currentTableData = `*PENAWARAN PEMBIAYAAN MOTOR*\nOTR: Rp ${otr.toLocaleString()}\nDP Net: Rp ${dp.toLocaleString()}\n--------------------------\n`				
+		currentTableData = `*PENAWARAN PEMBIAYAAN MOTOR*\n\nOTR: Rp ${otr.toLocaleString()}\n\nDP Net: Rp ${dp.toLocaleString()}\n\n`				
 		
 		let pk = KDS.getPokok(wil, ten, otr, dp);
 		let flat = (( (ten * ang) / pk ) - 1) * 12 / ten;
@@ -303,7 +303,7 @@
                 </div>`;
 				
 			if (profit > 0) {
-				currentTableData += `Tenor ${t} bln: Rp ${angsuran.toLocaleString()}\n`;
+				currentTableData += `Tenor ${t} bln @ Rp ${angsuran.toLocaleString()}/bulan\n`;
 			}
         });
         showResult("result2-display", html);
@@ -316,7 +316,7 @@
         if(!phone) return alert("Masukkan nomor WhatsApp!");
         if(!phone.startsWith('62')) phone = '62' + phone.replace(/^0/, '');
         
-        let text = encodeURIComponent(currentTableData + "\nNb.-Penawaran ini bersifat tidak mengikat\n-Harga dapat berubah setiap saat.");
+        let text = encodeURIComponent(currentTableData + "\n\nNb.-Penawaran ini bersifat tidak mengikat\n-Harga dapat berubah setiap saat\n-Lakukan konfirmasi sesegera mungkin.");
         window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
     }
 	
@@ -325,7 +325,7 @@
         if(!email) return alert("Masukkan alamat email!");
         
         let subject = encodeURIComponent("Penawaran Pembiayaan Motor");
-        let body = encodeURIComponent(currentTableData.replace(/\*/g, "") + "\nSimulasi ini bersifat estimasi.");
+        let body = encodeURIComponent(currentTableData.replace(/\*/g, "") + "\n\nNb.-Penawaran ini bersifat tidak mengikat\n-Harga dapat berubah setiap saat\n-Lakukan konfirmasi sesegera mungkin.");
         window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
     }	
 </script>
