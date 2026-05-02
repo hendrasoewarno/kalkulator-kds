@@ -1,24 +1,38 @@
-const CACHE_NAME = 'kds-v110';
+const CACHE_NAME = 'kds-portal-v1.0'; // Ganti ini setiap ada perubahan
 const assets = [
   './',
   './index.html',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'
+  './icon.png',
+  // ... aset lainnya
 ];
 
-// Install Service Worker
-self.addEventListener('install', e => {
-  e.waitUntil(
+// 1. Install & Skip Waiting
+self.addEventListener('install', evt => {
+  self.skipWaiting(); // Memaksa SW baru menjadi aktif segera
+  evt.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       return cache.addAll(assets);
     })
   );
 });
 
-// Fetch Assets from Cache
-self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request).then(response => {
-      return response || fetch(e.request);
+// 2. Activate & Hapus Cache Lama (Clean up)
+self.addEventListener('activate', evt => {
+  evt.waitUntil(
+    caches.keys().then(keys => {
+      return Promise.all(
+        keys.filter(key => key !== CACHE_NAME)
+            .map(key => caches.delete(key)) // Menghapus v1 saat v1.1 aktif
+      );
+    })
+  );
+});
+
+// 3. Fetch data
+self.addEventListener('fetch', evt => {
+  evt.respondWith(
+    caches.match(evt.request).then(cacheRes => {
+      return cacheRes || fetch(evt.request);
     })
   );
 });
