@@ -467,9 +467,23 @@
 // Register Service Worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('SW Registered!', reg))
-      .catch(err => console.log('SW Registration Failed', err));
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      
+      // Deteksi jika ada update
+      reg.onupdatefound = () => {
+        const installingWorker = reg.installing;
+        installingWorker.onstatechange = () => {
+          if (installingWorker.state === 'installed') {
+            if (navigator.serviceWorker.controller) {
+              // Service worker baru telah diinstal, beritahu user atau reload
+              console.log('Update tersedia, merestart aplikasi...');
+              window.location.reload(); 
+            }
+          }
+        };
+      };
+
+    });
   });
 }
 </script>
